@@ -1,79 +1,50 @@
 #include <iostream>
-#include <locale>
-#include <cmath>
 using namespace std;
 
-class Money
+class Drob
 {
 private:
-	int rub, cop;
+	int numerator, denominator;
 public:
-	Money();
-	Money(int _rub, int _cop);
-	Money(double number);
-	Money(const Money& money);
+	Drob();
+	Drob(int, int);
+	Drob(const Drob&);
 
-	Money operator=(const Money& other) { if (this == &other) return *this; else { rub = other.rub; cop = other. cop; return *this; }; }
-	Money operator=(const double& other) { rub = int(other); cop = (other - rub) * 100; return *this; }
-	bool operator>(Money other) { if ((rub == other.rub) && (cop > other.cop) || (rub > other.rub)) return 1; else return 0; }
-	bool operator<(Money other) { if ((rub == other.rub) && (cop < other.cop) || (rub < other.rub)) return 1; else return 0; }
-	bool operator==(Money other) { if ((rub == other.rub) && (cop == other.cop)) return 1; else return 0; }
-	Money operator+(Money other) { return Money(rub + other.rub, cop + other.cop); }
-	Money operator-(Money other) { return Money(rub - other.rub, cop - other.cop); }
-	double operator/(Money other) { return (rub + cop * 0.01) / (other.rub + other.cop * 0.01); }
-	Money operator/(int other) { return Money((rub + cop * 0.01) / other); }
-	Money operator*(int other) { return Money(rub * other, cop * other); }
-	friend ostream& operator<<(std::ostream& os, const Money& money) { return os << money.rub << " руб " << money.cop << " коп"; }
-	friend istream& operator>>(std::istream& is, Money& money) { return is >> money.rub >> money.cop; }
+	Drob operator+(Drob other) { return Drob(numerator * other.denominator + other.numerator * denominator, denominator * other.denominator); }
+	Drob operator-(Drob other) { return Drob(numerator * other.denominator - other.numerator * denominator, denominator * other.denominator); }
+	Drob operator*(Drob other) { return Drob(numerator * other.numerator, denominator * other.denominator); }
+	Drob operator/(Drob other) { return Drob(numerator * other.denominator, denominator * other.numerator); }
+
+	friend ostream& operator<<(std::ostream& os, const Drob& drob) { return os << drob.numerator << "/" << drob.denominator; }
+	friend istream& operator>>(std::istream& is, Drob& drob) { return is >> drob.numerator >> drob.denominator; }
 };
 
-Money::Money()
+Drob::Drob()
 {
-	rub = 0;
-	cop = 0;
+	numerator = 0;
+	denominator = 1;
 }
 
-Money::Money(int _rub, int _cop)
+Drob::Drob(int num, int denom)
 {
-	rub = _rub;
-	if (_cop >= 100)
-	{
-		rub += _cop / 100;
-		cop = _cop % 100;
-	}
-	else
-		if ((_cop < 0) && (_rub > 0))
-		{
-			rub -= abs(_cop) / 100;
-			cop = abs(_cop) % 100;
-		}
-		else
-			cop = _cop;
+	int a = 1;
+	for (int i = 1; i <= num; i++)
+		if ((num % i == 0) && (denom % i == 0))
+			a = i;
+	numerator = num / a;
+	denominator = denom / a;
 }
 
-Money::Money(double number)
+Drob::Drob(const Drob& other)
 {
-	rub = int(number);
-	cop = int((number - rub) * 100);
-}
-
-Money::Money(const Money& money)
-{
-	rub = money.rub;
-	cop = money.cop;
+	numerator = other.numerator;
+	denominator = other.denominator;
 }
 
 int main()
 {
-	setlocale(LC_ALL, "Russian");
-	double e = 3;
-	while (e != 0)
-	{
-		Money a;
-		cin >> a;
-		Money b = 45.29;
-		cout << a << " " << b << " " << (a < b) << " " << (a - b) << " " << (a + b) << endl;
-		cin >> e;
-	}
-	return 0;
+	Drob a;
+	cin >> a;
+	Drob b = Drob(5, 10);
+	cout << a << " " << b << " " << (a - b) << " " << (a / b);
 }
