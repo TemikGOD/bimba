@@ -86,10 +86,7 @@ Date::Date(int _day, int _month, int _year)
 					}
 				}
 				else
-				{
 					day = _day;
-					_month = 0;
-				}
 	if (_month > 12)
 	{
 		month = _month - 12;
